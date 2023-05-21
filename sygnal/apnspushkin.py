@@ -320,9 +320,11 @@ class ApnsPushkin(ConcurrencyLimitedPushkin):
                 # Nothing to do
                 span_parent.log_kv({logs.EVENT: "apns_no_payload"})
                 return []
-            prio = 10
-            if n.prio == "low":
-                prio = 5
+            
+            # background message priority has to be 5
+            # see https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_background_updates_to_your_app#2980040
+            # and https://stackoverflow.com/questions/57871677/ios-13-silent-push-notifications-are-no-longer-reliable
+            prio = 5
 
             shaved_payload = apnstruncate.truncate(
                 payload, max_length=self.MAX_JSON_BODY_SIZE
